@@ -4,9 +4,9 @@ export function AbstractColumn(table: any, knex: any) {
     .dateTime('createdOnDate')
     .notNullable()
     .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
-  table.uuid('createByUserId').nullable();
+  table.string('createByUserId', 36).nullable();
   table.dateTime('lastModifiedOnDate').defaultTo(knex.fn.now());
-  table.uuid('lastModifiedByUserId',).nullable();
+  table.string('lastModifiedByUserId', 36).nullable();
   table.dateTime('deleteAt').defaultTo(null);
 }
 

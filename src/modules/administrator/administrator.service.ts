@@ -6,6 +6,7 @@ import { Role } from 'src/database/models/role.model';
 import { User } from 'src/database/models/user.model';
 import { Administrator } from 'src/database/models/administrator.model';
 import { ModelClass } from 'objection';
+import { PasswordCipher } from 'src/common/util/password-cipher';
 
 @Injectable()
 export class AdministratorService {
@@ -14,6 +15,8 @@ export class AdministratorService {
   private userHelper: Helper<User>;
 
   constructor(
+    private passwordCipher: PasswordCipher,
+
     @Inject('Administrator')
     private readonly adminModel: ModelClass<Administrator>,
     @Inject('User') private readonly userModel: ModelClass<User>,
@@ -50,7 +53,7 @@ export class AdministratorService {
       });
       const userRecord = await this.userHelper.insert({
         identifier: process.env.SUPERADMIN_IDENTIFIER,
-        password: process.env.SUPERADMIN_PASSWORD,
+        password: await this.passwordCipher.hash(process.env.SUPERADMIN_PASSWORD),
         type: USER_TYPE.ADMIN,
         administrator: { emailAddress: process.env.SUPERADMIN_IDENTIFIER, fullName: 'Super Admin' },
         user_role: [{ roleId: superAdminRole.id }],

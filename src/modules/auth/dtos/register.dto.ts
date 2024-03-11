@@ -22,10 +22,12 @@ export class RegisterDto {
   @IsNotEmpty()
   @Length(8, 255)
   @Matches(/^[A-Za-z\d#$@!%&*?.]{8,16}$/)
+  @Transform(({ value }) => String(value?.toString().trim().toLowerCase()))
   password?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @Length(4, 4)
+  @Transform(({ value }) => String(value?.toString().trim().toLowerCase()))
   otpCode?: string;
 }

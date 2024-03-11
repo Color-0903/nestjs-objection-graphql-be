@@ -13,12 +13,6 @@ import {
 
 @ObjectType()
 export class CommonDto {
-  @Field({ nullable: false })
-  @IsString()
-  @Length(36, 36)
-  @Transform(({ value }) => String(value?.toString().trim()))
-  id: string;
-
   @Field({ nullable: true })
   @IsString()
   @IsOptional()

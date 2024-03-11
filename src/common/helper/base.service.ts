@@ -2,6 +2,7 @@ import { Model, ModelClass, QueryBuilderType } from 'objection';
 import { DELETE_TYPE, STATUS_RETURN } from '../constants/enum';
 import { Filter } from '../dtos/filter.dto';
 import { pagination, paginationResponse } from '../util/pagination';
+import { BadRequestException } from '@nestjs/common';
 
 export class Helper<T extends Model> {
   private baseModel: ModelClass<T>;
@@ -53,27 +54,39 @@ export class Helper<T extends Model> {
   }
 
   async insert(item, graph?: Boolean): Promise<T> {
-    const response = graph
-      ? await this.baseModel.query().insertGraphAndFetch(item)
-      : await this.baseModel.query().insertAndFetch(item);
-    return response as T;
+    try {
+      const response = graph
+        ? await this.baseModel.query().insertGraphAndFetch(item)
+        : await this.baseModel.query().insertAndFetch(item);
+      return response as T;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async update(id: string, item): Promise<T> {
-    await this.baseModel.query().update(item).where('id', id);
-    return (await this.baseModel.query().findById(id)) as T;
+    try {
+      await this.baseModel.query().update(item).where('id', id);
+      return (await this.baseModel.query().findById(id)) as T;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async delete(id: string, type: DELETE_TYPE): Promise<String> {
-    if (type === DELETE_TYPE.HARD) {
-      await this.baseModel.query().delete().where('id', id);
-    } else {
-      await this.baseModel
-        .query()
-        .update({ deleteAt: new Date() })
-        .where('id', id);
+    try {
+      if (type === DELETE_TYPE.HARD) {
+        await this.baseModel.query().delete().where('id', id);
+      } else {
+        await this.baseModel
+          .query()
+          .update({ deleteAt: new Date() })
+          .where('id', id);
+      }
+      return STATUS_RETURN.SUCCESS;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
-    return STATUS_RETURN.SUCCESS;
   }
 
   private handleCondition = (conditions?) => {

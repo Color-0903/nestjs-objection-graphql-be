@@ -1,13 +1,23 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import { QueryBuilderType } from 'objection';
 import { Filter } from '../dtos/filter.dto';
-import { ObjectType } from '@nestjs/graphql';
+import { Role } from 'src/database/models/role.model';
+import { User } from 'src/database/models/user.model';
 
 @ObjectType()
 export class paginationResponse<T> {
-  data: T[];
-  page: number | undefined | null;
-  size: number | undefined | null;
-  sort: string | undefined | null;
+
+  @Field((type) => [Role] || [User], { nullable: false })
+  data?: T[];
+
+  @Field((type) => Number, { nullable: true })
+  page: number;
+
+  @Field((type) => Number, { nullable: true })
+  size?: number;
+
+  @Field((type) => String, { nullable: true })
+  sort?: string;
 }
 
 export const pagination = async (

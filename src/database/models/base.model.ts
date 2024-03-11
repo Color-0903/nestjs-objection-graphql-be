@@ -9,7 +9,7 @@ export class BaseModel extends Model {
 
   @Column({ type: columnTypes.date || null })
   @Field({ nullable: true })
-  createdOnDate: string | null;
+  createdOnDate: Date | null;
 
   @Column({ type: columnTypes.string || null })
   @Field({ nullable: true })
@@ -19,9 +19,9 @@ export class BaseModel extends Model {
   @Field({ nullable: true })
   lastModifiedOnDate: Date | null;
 
-  @Column({ type: columnTypes.date || null })
+  @Column({ type: columnTypes.string || null })
   @Field({ nullable: true })
-  lastModifiedByUserId: Date | null;
+  lastModifiedByUserId: string | null;
 
   @Column({ type: columnTypes.date || columnTypes.boolean })
   @Field({ nullable: true })
